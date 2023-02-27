@@ -9,7 +9,7 @@ Objective of CTF was
 1. You need to set the opened flag to true via the open function
 2. You need to handwrite the bytecode opcode by opcode and stay within the size of less than 33 bytes
 
-Get Contract code is as below -
+Gate Contract code is as below -
 
 ```solidity
 // SPDX-License-Identifier: UNLICENSED
@@ -48,7 +48,7 @@ contract Gate {
 }
 ```
 
-Basically need to pass three 4 hurdles to open the gate -
+Basically the guardian contract (which we had to create) need to pass three 4 hurdles to open the gate -
 
 1. Code size to be less than 33.
 2. Output of the function f00000000_bvvvdlt() of contract must return msg.sender
@@ -61,7 +61,7 @@ I used huff to create contract as below -
 
 ```solidity
 #define macro MAIN() = takes(0) returns (1) {
-caller 0x00 mstore // Step 1 - caller is stored in memory at 0x00
+    caller 0x00 mstore // Step 1 - caller is stored in memory at 0x00
 
     origin 0x20 mstore               // Step 2 - origin is stored in memory at 0x20
 
@@ -84,3 +84,37 @@ caller 0x00 mstore // Step 1 - caller is stored in memory at 0x00
 ```
 
 code size is less than 33.
+
+Below is the test contract
+
+```solidity
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.13;
+
+import "forge-std/Test.sol";
+import "../src/Gate.sol";
+import {HuffDeployer} from "foundry-huff/HuffDeployer.sol"; //Run this test in Foundry with Huff installed (forge install huff-language/foundry-huff)
+
+contract MultiSigWalletTest is Test {
+    Gate public gate;
+    address huffContract;
+
+    address alice = vm.addr(0x01);
+    address bob = vm.addr(0x02);
+    address marie = vm.addr(0x03);
+    address maria = vm.addr(0x04);
+
+    address[] owners = [alice, bob, maria];
+
+    function setUp() public {
+        gate = new Gate();
+        huffContract = HuffDeployer.deploy("guardian");
+    }
+
+    /* OPEN THE GATE */
+    function testOpen() public {
+        gate.open(huffContract);
+        assertEq(gate.opened(), true); // GATE IS OPENED
+    }
+}
+```
