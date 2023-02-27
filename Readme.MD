@@ -44,4 +44,4 @@ caller 0x00 mstore // Step 1 - caller is stored in memory at 0x00
 }
 ```
 
-code size is less than 33..
+code size is less than 33.
