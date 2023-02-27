@@ -57,7 +57,9 @@ Basically the guardian contract (which we had to create) need to pass three 4 hu
 
 Only if above conditions are fulfilled, gate can be opened.
 
-I used huff to create contract as below -
+---
+
+guardian contract was created using huff as below -
 
 ```solidity
 #define macro MAIN() = takes(0) returns (1) {
@@ -83,9 +85,17 @@ I used huff to create contract as below -
 }
 ```
 
-code size is less than 33.
+---
 
-Below is the test contract
+ByteCode of contract is
+
+60148060093d393df33360005232602052602060003560e01c602002f3
+
+The execution code is well below 33 bytes limit.
+
+---
+
+Below is the test contract to test the guardian huff contract.
 
 ```solidity
 // SPDX-License-Identifier: UNLICENSED
@@ -118,3 +128,8 @@ contract MultiSigWalletTest is Test {
     }
 }
 ```
+
+Running 1 test for test/Gate.t.sol:MultiSigWalletTest
+[PASS] testOpen() (gas: 8937393460516752313)
+
+---
