@@ -9,6 +9,45 @@ Objective of CTF was
 1. You need to set the opened flag to true via the open function
 2. You need to handwrite the bytecode opcode by opcode and stay within the size of less than 33 bytes
 
+Get Contract code is as below -
+
+```solidity
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.17;
+
+interface IGuardian {
+    function f00000000_bvvvdlt() external view returns (address);
+
+    function f00000001_grffjzz() external view returns (address);
+}
+
+contract Gate {
+    bool public opened;
+
+    function open(address guardian) external {
+        uint256 codeSize;
+        assembly {
+            codeSize := extcodesize(guardian)
+        }
+        require(codeSize < 33, "bad code size");
+
+        require(
+            IGuardian(guardian).f00000000_bvvvdlt() == address(this),
+            "invalid pass"
+        );
+        require(
+            IGuardian(guardian).f00000001_grffjzz() == tx.origin,
+            "invalid pass"
+        );
+
+        (bool success, ) = guardian.call(abi.encodeWithSignature("fail()"));
+        require(!success);
+
+        opened = true;
+    }
+}
+```
+
 Basically need to pass three 4 hurdles to open the gate -
 
 1. Code size to be less than 33.
